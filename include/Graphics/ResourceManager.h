@@ -1,0 +1,16 @@
+
+
+
+
+
+
+
+
+
+namespace Graphics {
+
+  class ResourceManager
+  {
+
+  };
+}
