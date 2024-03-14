@@ -1,8 +1,60 @@
 #include "../../include/Graphics/Mesh.h"
 #include <glad/glad.h>
 #include <iostream>
-#include <system_error>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include "../../include/Graphics/stb_image.h"
+#include <assimp/Importer.hpp>
+#include <assimp/postprocess.h>
+#include <assimp/scene.h>
+#include <unordered_map>
+
+
+
+
+
+
+
+
+
+
+
+struct Vertex {
+  glm::vec3 Position;
+  glm::vec3 Normal;
+  glm::vec2 TexCoords;
+};
+
+struct Texture {
+  unsigned int id;
+  std::string type;
+};
+
+
+class Mesh {
+  public: 
+    // Mesh data
+    vector<Vertex> vertices;
+    vector<unsigned int> indices;
+    vector<Texture> textures;
+    
+    Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures);
+    
+    void Draw(Shader &shader);
+
+  private:
+    // Render buffer objects
+    // VAO: Describes how the data in the VBO is interpreted
+    // VBO: Contains bytes of data that 
+    // EBO: Contains array of ints mapped to 
+   
+    unsigned int VAO;
+    unsigned int VBO;
+    unsigned int EBO;
+
+}
+
 
 
 
@@ -18,6 +70,8 @@ namespace Graphics {
 
   Graphics::Mesh::Mesh(float verticies[], int dataSize, unsigned int indices[], int indexSize)
     {
+
+
 
     loadVAO();
     unsigned int VBOs[1], EBO; 
@@ -39,6 +93,51 @@ namespace Graphics {
     assignVertexAttributes();
     
   }
+
+
+
+
+  void Graphics::Mesh::loadModel(std::string)
+  {
+    Assimp::Importer import;
+    const aiScene *scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+
+    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
+    {
+      std::cout << "EEROR::ASSIMP::" << import.GetErrorString() << std::endl;
+      return;
+    }
+
+ 
+    directory = path.subtr(0, path.find_last_of('/'));
+    processNode(scene->mRootNode, scene);
+  
+
+  }
+
+
+  void Graphics::Mesh::processNode(aiNode *node, const aiScene *scene)
+  {
+
+    // Are there meshes in this node? if so, processNode
+    for (unsigned int i = 0; i< node->mNumMeshes; i++)
+    {
+      aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
+      meshes.push_back(processMesh(mesh, scene));
+    }
+
+    // Are there children in this node? then process each of those nodes
+    for (unsigned int i = 0; i < node->mNumChildren; i++)
+    {
+      proccessNode(node->mChildren[i], scene);
+    }
+  }
+
+  void Graphics::Mesh::processMesh(aiMesh *mesh, aiScene *scene)
+  {
+
+  }
+
 
 
 
@@ -96,6 +195,7 @@ namespace Graphics {
   // VAO Getter
   unsigned int Graphics::Mesh::getVAO()
   {
+    std::cout << "GETTING VAO: " << VAO << std::endl;
     return VAO;
   }
 

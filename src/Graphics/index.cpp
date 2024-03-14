@@ -6,18 +6,12 @@
 #include "../../include/Graphics/Mesh.h"
 #include "../../include/Graphics/Renderer.h"
 #include "../../include/Graphics/stb_image.h"
-// settings
-
-  void loadImageDara(const char* path);
+#include <assimp/Importer.hpp>
 
 
-int main()
-{
-    Graphics::GLCanvas canvas;    
-    canvas.initializeCanvas();
-    GLFWwindow *window = canvas.getWindow();
 
-   
+
+
     float Rectangle[] = {
         // positions          // colors           // texture coords
          0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, 1.0f, 1.0f, // top right
@@ -33,7 +27,14 @@ int main()
 
     float visibility = 0.5f;
 
-// ENDDDDDD
+
+
+int main()
+{
+    Graphics::GLCanvas canvas;    
+    canvas.initializeCanvas();
+    GLFWwindow *window = canvas.getWindow();
+
 
     Graphics::Mesh rectangle(Rectangle, sizeof(Rectangle), indices, sizeof(indices));
     Graphics::Shader shaderProgram(
@@ -43,11 +44,6 @@ int main()
 
     Graphics::Renderer renderer;
 
-
- //   unsigned int VAO;
-//std::cout << "CURRENTTYPE: " << VAO << std::endl;
-
-
     // Rendering in window 
     while (!glfwWindowShouldClose(window)) 
     {
@@ -55,8 +51,6 @@ int main()
       
       renderer.draw(shaderProgram, visibility, rectangle.getVAO(), window);
     }
-
-
 
 
     // optional: de-allocate all resources once they've outlived their purpose:
@@ -72,24 +66,3 @@ int main()
 
 
 
-  void loadImageDara(const char* path)
-{
-    stbi_set_flip_vertically_on_load(true);
-    int width, height, nrChannels;
-    unsigned char *data = stbi_load(path, &width, &height, &nrChannels, 0);
-
-
-    if (data)
-    {
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data); 
-      glGenerateMipmap(GL_TEXTURE_2D);
-    }
-
-    else 
-    {
-      std::cout << "Failed to load texture" << std::endl;
-    }
-
-    stbi_image_free(data);
-    
-}

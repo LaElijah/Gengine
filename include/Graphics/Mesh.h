@@ -26,6 +26,8 @@ namespace Graphics {
     void loadTexture(unsigned int activeTexture, unsigned int texture, const char *path);
     void loadTextures();
 
+    void load
+    void loadMesh(const char* filepath);
     void loadVAO();
     void loadVertexAttributes();
   };
